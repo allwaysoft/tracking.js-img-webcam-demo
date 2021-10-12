@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>demo</title>
+
+  <script src="./build/tracking-min.js"></script>
+  <script src="./build/data/face-min.js"></script>
+  <style>
+    video,
+    canvas {
+      position: absolute;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="demo-container">
+    <video id="video" width="320" height="240" preload autoplay loop muted></video>
+    <canvas id="canvas" width="320" height="240"></canvas>
+  </div>
+
+  <script>
+    window.onload = function () {
+      // 视频显示
+      var video = document.getElementById('video');
+      //   绘图
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+
+      var tracker = new tracking.ObjectTracker('face');
+      //   设置识别的放大比例
+      tracker.setInitialScale(4);
+      //   设置步长
+      tracker.setStepSize(2);
+      //   边缘密度
+      tracker.setEdgesDensity(0.1);
+
+      //   启动摄像头，并且识别视频内容
+      tracking.track('#video', tracker, {
+        camera: true
+      });
+
+      tracker.on('track', function (event) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        // 绘制
+        event.data.forEach(function (rect) {
+          context.strokeStyle = '#a64ceb';
+          context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+        });
+      });
+
+
+    };
+
+  </script>
+
+</body>
+
+</html>
